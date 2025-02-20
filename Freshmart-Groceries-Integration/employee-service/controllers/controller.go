@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -21,9 +23,15 @@ var (
 )
 
 func init() {
+	// Load environment variables from .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// Create a MongoDB client and connect to MongoDB
-	var err error
-	client, err = mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
+	mongoURI := os.Getenv("MONGODB_URI")
+	client, err = mongo.NewClient(options.Client().ApplyURI(mongoURI))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,7 +43,7 @@ func init() {
 	}
 
 	// Get the "employees" collection from the "employee-service" database
-	collection = client.Database("employee-service").Collection("employees")
+	collection = client.Database("FreshMart-Groceries").Collection("employees")
 	fmt.Println("Connected to MongoDB")
 }
 

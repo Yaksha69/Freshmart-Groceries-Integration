@@ -1,19 +1,25 @@
-// main.go
 package main
 
 import (
 	"employee-service/routes"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	// Register routes
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	routes.RegisterRoutes()
 
-	// Start the server
-	log.Println("Server started on :3004")
-	err := http.ListenAndServe(":3004", nil)
+	port := os.Getenv("PORT")
+	log.Println("Server started on :" + port)
+	err = http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
